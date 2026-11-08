@@ -1,25 +1,31 @@
 # HARIS AI
-# Version 1.0
+# Version 1.1
+
+from ai_engine import get_response
+from config import APP_NAME, VERSION, WELCOME_MESSAGE
+
 
 def main():
-    print("========================")
-    print("       HARIS AI")
-    print("========================")
-    print("Hello! I am Haris AI.")
+    print("=" * 35)
+    print(f"       {APP_NAME}")
+    print(f"       Version {VERSION}")
+    print("=" * 35)
+
+    print(WELCOME_MESSAGE)
     print("Type 'exit' to close.")
 
     while True:
-        message = input("\nYou: ")
+        message = input("\nYou: ").strip()
 
         if message.lower() == "exit":
             print("Haris AI: Goodbye!")
             break
 
-        elif message.lower() in ["hello", "hi"]:
-            print("Haris AI: Hello! How can I help you?")
+        if not message:
+            continue
 
-        else:
-            print("Haris AI: I am still learning!")
+        response = get_response(message)
+        print(f"Haris AI: {response}")
 
 
 if __name__ == "__main__":
