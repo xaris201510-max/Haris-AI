@@ -1,49 +1,46 @@
 
-# HARIS AI ENGINE
-# Version 1.3
+import json
+import urllib.request
+import urllib.error
+import os
 
-import unicodedata
-
-
-def normalize(text):
-    text = text.lower().strip()
-    text = unicodedata.normalize("NFD", text)
-    return "".join(
-        char for char in text
-        if unicodedata.category(char) != "Mn"
-    )
-
+API_KEY = os.environ.get("OPENAI_API_KEY", "")
 
 def get_response(message):
-    text = normalize(message)
+    if not API_KEY:
+        return "API key is not configured yet."
 
-    # Greetings
-    if any(word in text for word in ["hello", "hi", "hey", "γεια", "καλημερα", "καλησπερα"]):
-        return "Hello! Γεια σου! I am Haris AI!"
+    url = "https://api.openai.com/v1/responses"
 
-    # Identity
-    if any(word in text for word in ["your name", "who are you", "ποιος εισαι", "πως σε λενε"]):
-        return "I am Haris AI, your personal assistant!"
+    data = {
+        "model": "gpt-4.1-mini",
+        "input": message
+    }
 
-    # Feelings
-    if "how are you" in text or "τι κανεις" in text:
-        return "I am working perfectly! Είμαι έτοιμο να βοηθήσω!"
+    headers = {
+        "Authorization": f"Bearer {API_KEY}",
+        "Content-Type": "application/json"
+    }
 
-    # Help
-    if "help" in text or "βοηθεια" in text:
-        return "Of course! Tell me what you need help with."
+    request = urllib.request.Request(
+        url,
+        data=json.dumps(data).encode("utf-8"),
+        headers=headers,
+        method="POST"
+    )
 
-    # Thanks
-    if "thank" in text or "ευχαριστ" in text:
-        return "You're welcome! Παρακαλώ!"
+    try:
+        with urllib.request.urlopen(request, timeout=60) as response:
+            result = json.loads(response.read().decode("utf-8"))
 
-    # Time
-    if "time" in text or "ωρα" in text:
-        return "I cannot check the current time yet."
+        for item in result.get("output", []):
+            for content in item.get("content", []):
+                if content.get("type") == "output_text":
+                    return content.get("text", "")
 
-    # Goodbye
-    if any(word in text for word in ["goodbye", "bye", "αντιο"]):
-        return "Goodbye! Τα λέμε!"
+        return "I could not find a response."
 
-    return "I don't know that answer yet. I am still learning!"
-    
+    except urllib.error.HTTPError as error:
+        return f"API Error: HTTP {error.code}"
+    except Exception as error:
+        return f"Connection Error: {error}"
