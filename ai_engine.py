@@ -4,7 +4,8 @@ import urllib.request
 import urllib.error
 import os
 
-API_KEY = os.environ.get("OPENAI_API_KEY", "")
+from getpass import getpass
+API_KEY = getpass("Enter your OpenAI API key: ")
 
 def get_response(message):
     if not API_KEY:
