@@ -1,0 +1,7 @@
+# HARIS AI CONFIGURATION
+
+APP_NAME = "Haris AI"
+VERSION = "1.0"
+LANGUAGE = "English"
+
+WELCOME_MESSAGE = "Welcome to Haris AI!"
