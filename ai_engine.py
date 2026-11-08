@@ -1,33 +1,49 @@
+
 # HARIS AI ENGINE
-# Version 1.2
+# Version 1.3
+
+import unicodedata
+
+
+def normalize(text):
+    text = text.lower().strip()
+    text = unicodedata.normalize("NFD", text)
+    return "".join(
+        char for char in text
+        if unicodedata.category(char) != "Mn"
+    )
+
 
 def get_response(message):
-    message = message.lower().strip()
+    text = normalize(message)
 
-    # English
-    if any(word in message for word in ["hello", "hi", "hey"]):
-        return "Hello! Welcome to Haris AI!"
+    # Greetings
+    if any(word in text for word in ["hello", "hi", "hey", "γεια", "καλημερα", "καλησπερα"]):
+        return "Hello! Γεια σου! I am Haris AI!"
 
-    if "your name" in message or "who are you" in message:
+    # Identity
+    if any(word in text for word in ["your name", "who are you", "ποιος εισαι", "πως σε λενε"]):
         return "I am Haris AI, your personal assistant!"
 
-    if "how are you" in message:
-        return "I am working perfectly!"
+    # Feelings
+    if "how are you" in text or "τι κανεις" in text:
+        return "I am working perfectly! Είμαι έτοιμο να βοηθήσω!"
 
-    # Greek
-    if any(word in message for word in ["γεια", "καλησπέρα", "καλημέρα"]):
-        return "Γεια σου! Είμαι το Haris AI!"
+    # Help
+    if "help" in text or "βοηθεια" in text:
+        return "Of course! Tell me what you need help with."
 
-    if "πως σε λενε" in message or "ποιος εισαι" in message:
-        return "Με λένε Haris AI!"
+    # Thanks
+    if "thank" in text or "ευχαριστ" in text:
+        return "You're welcome! Παρακαλώ!"
 
-    if "τι κανεις" in message:
-        return "Είμαι έτοιμο να σε βοηθήσω!"
+    # Time
+    if "time" in text or "ωρα" in text:
+        return "I cannot check the current time yet."
 
-    if "ευχαριστω" in message:
-        return "Παρακαλώ! Χαίρομαι που βοηθάω!"
+    # Goodbye
+    if any(word in text for word in ["goodbye", "bye", "αντιο"]):
+        return "Goodbye! Τα λέμε!"
 
-    if "βοηθεια" in message:
-        return "Φυσικά! Πες μου τι χρειάζεσαι."
-
-    return "Δεν γνωρίζω ακόμη την απάντηση. Μαθαίνω συνεχώς!"
+    return "I don't know that answer yet. I am still learning!"
+    
